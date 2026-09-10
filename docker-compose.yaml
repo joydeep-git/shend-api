@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      context: ./shend-api
+      dockerfile: Dockerfile
+    container_name: shend-api
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18-alpine
+    container_name: shend-postgres
+    environment:
+      POSTGRES_DB: shend
+      POSTGRES_USER: shend
+      POSTGRES_PASSWORD: shend123
+    ports:
+      - "11752:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shend -d shend"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    container_name: shend-redis
+    ports:
+      - "19283:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
