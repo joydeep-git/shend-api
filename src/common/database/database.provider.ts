@@ -1,11 +1,11 @@
 import { Provider } from '@nestjs/common';
 import { Pool } from 'pg';
 
-export const DATABASE_POOL = 'DB';
+export const DB = 'DB';
 
 export const DatabaseProvider: Provider = {
 
-  provide: DATABASE_POOL,
+  provide: DB,
 
   useFactory: () => {
     return new Pool({
