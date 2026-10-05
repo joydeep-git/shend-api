@@ -7,12 +7,13 @@ export const DriveProvider: Provider = {
   provide: GOOGLE_DRIVE,
 
   useFactory: () => {
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GD_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      },
-      scopes: ['https://www.googleapis.com/auth/drive'],
+    const auth = new google.auth.OAuth2(
+      process.env.GA_CLIENT,
+      process.env.GA_SECRET,
+    );
+
+    auth.setCredentials({
+      refresh_token: process.env.GA_REFRESH_TOKEN,
     });
 
     return google.drive({
